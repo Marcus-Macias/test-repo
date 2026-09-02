@@ -1,0 +1,285 @@
+@page "/general-information"
+@using TestSCVR.Models
+
+<PageTitle>General Information</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+    <MudForm @ref="_form" Model="Model">
+
+        @* ---------- Page header ---------- *@
+        <div class="d-flex flex-wrap justify-space-between align-center mb-6 gap-4">
+            <div>
+                <MudText Typo="Typo.overline" Color="Color.Primary">Survey Application</MudText>
+                <MudText Typo="Typo.h4" Class="fw-600">General Information</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Step 1 of 7 &middot; Tell us about the applicant
+                </MudText>
+            </div>
+
+            <MudPaper Elevation="0" Class="pa-3 rounded-lg"
+                      Style="border:1px solid var(--mud-palette-lines-default);min-width:320px;">
+                <div class="d-flex align-center gap-3">
+                    <MudIcon Icon="@Icons.Material.Filled.VerifiedUser"
+                             Color="@(Model.NoClosuresWithin36Months ? Color.Success : Color.Default)" />
+                    <div class="flex-grow-1">
+                        <MudText Typo="Typo.subtitle2">No Closures Within Previous 36 Months</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">Applicant attestation</MudText>
+                    </div>
+                    <MudSwitch @bind-Value="Model.NoClosuresWithin36Months"
+                               Color="Color.Success" />
+                </div>
+            </MudPaper>
+        </div>
+
+        @* ---------- Identity ---------- *@
+        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
+            @SectionHeader(Icons.Material.Filled.Badge, "Identity")
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.SocialSecurityNumber"
+                                  Label="Social Security No."
+                                  Mask="@(new PatternMask("000-00-0000"))"
+                                  Placeholder="___-__-____"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Pin"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudDatePicker @bind-Date="Model.DateOfBirth"
+                                   Label="Date of Birth"
+                                   MaxDate="DateTime.Today"
+                                   Placeholder="MM/DD/YYYY"
+                                   Editable="true"
+                                   Variant="Variant.Outlined" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* ---------- Name ---------- *@
+        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
+            @SectionHeader(Icons.Material.Filled.Person, "Name")
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.LastName" Label="Last Name"
+                                  Required="true" RequiredError="Last name is required"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField @bind-Value="Model.FirstName" Label="First Name"
+                                  Required="true" RequiredError="First name is required"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="6" sm="3" md="1">
+                    <MudTextField @bind-Value="Model.MiddleInitial" Label="MI" MaxLength="1"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="6" sm="3" md="3">
+                    <MudSelect @bind-Value="Model.Suffix" Label="Suffix" Clearable="true"
+                               Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var suffix in GeneralInformationOptions.Suffixes)
+                        {
+                            <MudSelectItem Value="@suffix">@suffix</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="Model.PreferredName" Label="Preferred Name"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudTextField @bind-Value="Model.MaidenName" Label="Maiden Name"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* ---------- Contact ---------- *@
+        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
+            @SectionHeader(Icons.Material.Filled.ContactPhone, "Contact Information")
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="Model.HomePhone" Label="Home Phone"
+                                  Mask="@(new PatternMask("(000) 000-0000"))"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Home"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="Model.MobilePhone" Label="Mobile Phone"
+                                  Mask="@(new PatternMask("(000) 000-0000"))"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Smartphone"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="Model.WorkPhone" Label="Work Phone"
+                                  Mask="@(new PatternMask("(000) 000-0000"))"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Work"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudTextField @bind-Value="Model.Email" Label="Email"
+                                  InputType="InputType.Email"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email"
+                                  Variant="Variant.Outlined" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* ---------- Demographics ---------- *@
+        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
+            @SectionHeader(Icons.Material.Filled.Groups, "Demographics")
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect @bind-Value="Model.Gender" Label="Gender" Clearable="true"
+                               Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var gender in GeneralInformationOptions.Genders)
+                        {
+                            <MudSelectItem Value="@gender">@gender</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <div class="mt-4">
+                        <MudSelect @bind-Value="Model.Hispanic" Label="Hispanic or Latino" Clearable="true"
+                                   Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                            @foreach (var option in GeneralInformationOptions.HispanicOptions)
+                            {
+                                <MudSelectItem Value="@option">@option</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" sm="6" md="3">
+                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">Veteran</MudText>
+                    <MudToggleGroup T="bool?" @bind-Value="Model.IsVeteran"
+                                    Color="Color.Primary" CheckMark="true" FixedContent="true"
+                                    SelectionMode="SelectionMode.SingleSelection">
+                        <MudToggleItem Value="@((bool?)true)" Text="Yes" />
+                        <MudToggleItem Value="@((bool?)false)" Text="No" />
+                    </MudToggleGroup>
+                </MudItem>
+
+                <MudItem xs="12" md="5">
+                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">Race (select all that apply)</MudText>
+                    <div class="d-flex flex-column">
+                        @foreach (var race in GeneralInformationOptions.Races)
+                        {
+                            <MudCheckBox T="bool" Dense="true"
+                                         Value="Model.Races.Contains(race)"
+                                         ValueChanged="@(v => ToggleRace(race, v))"
+                                         Label="@race" />
+                        }
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* ---------- Address ---------- *@
+        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
+            @SectionHeader(Icons.Material.Filled.LocationOn, "Address")
+            <MudGrid Spacing="6">
+                @* Street address *@
+                <MudItem xs="12" md="6">
+                    <div class="d-flex justify-space-between align-center mb-3">
+                        <MudText Typo="Typo.subtitle1" Class="fw-600">Street Address</MudText>
+                    </div>
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="Model.StreetAddress" Label="Address" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="Model.StreetSuite" Label="Suite, Apt, etc." Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudSelect @bind-Value="Model.StreetState" Label="State" Variant="Variant.Outlined"
+                                       AnchorOrigin="Origin.BottomCenter">
+                                @foreach (var state in GeneralInformationOptions.States)
+                                {
+                                    <MudSelectItem Value="@state">@state</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="5">
+                            <MudTextField @bind-Value="Model.StreetCity" Label="City" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="6" sm="3">
+                            <MudTextField @bind-Value="Model.StreetZip" Label="Zip Code"
+                                          Mask="@(new PatternMask("00000-0000"))" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="6" sm="4">
+                            <MudTextField @bind-Value="Model.StreetCounty" Label="County" Variant="Variant.Outlined" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+
+                @* Mailing address *@
+                <MudItem xs="12" md="6">
+                    <div class="d-flex justify-space-between align-center mb-3">
+                        <MudText Typo="Typo.subtitle1" Class="fw-600">Mailing Address</MudText>
+                        <div class="d-flex align-center gap-2">
+                            <MudTooltip Text="Copy from street address">
+                                <MudButton Size="Size.Small" Variant="Variant.Text"
+                                           StartIcon="@Icons.Material.Filled.ContentCopy"
+                                           OnClick="CopyStreetToMailing">Same as street</MudButton>
+                            </MudTooltip>
+                            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Error"
+                                       StartIcon="@Icons.Material.Filled.Clear"
+                                       OnClick="ClearMailingAddress">Clear</MudButton>
+                        </div>
+                    </div>
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="Model.MailingAddress" Label="Address" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudSelect @bind-Value="Model.MailingState" Label="State" Clearable="true"
+                                       Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                                @foreach (var state in GeneralInformationOptions.States)
+                                {
+                                    <MudSelectItem Value="@state">@state</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="5">
+                            <MudTextField @bind-Value="Model.MailingCity" Label="City" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="3">
+                            <MudTextField @bind-Value="Model.MailingZip" Label="Zip Code"
+                                          Mask="@(new PatternMask("00000-0000"))" Variant="Variant.Outlined" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* ---------- Actions ---------- *@
+        <div class="d-flex justify-space-between align-center mt-8">
+            <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                       StartIcon="@Icons.Material.Filled.Logout"
+                       OnClick="Exit">Exit</MudButton>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                       EndIcon="@Icons.Material.Filled.ArrowForward"
+                       Disabled="_submitting"
+                       OnClick="ContinueAsync">
+                @if (_submitting)
+                {
+                    <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+                    <span>Savingâ€¦</span>
+                }
+                else
+                {
+                    <span>Continue</span>
+                }
+            </MudButton>
+        </div>
+    </MudForm>
+</MudContainer>
+
+@code {
+    // Markup-only helper for consistent section headers. Page logic lives in
+    // GeneralInformation.razor.cs (code-behind).
+    private RenderFragment SectionHeader(string icon, string title) =>
+    @<div class="d-flex align-center gap-2 mb-5">
+        <MudIcon Icon="@icon" Color="Color.Primary" Size="Size.Small" />
+        <MudText Typo="Typo.h6" Class="fw-600">@title</MudText>
+    </div>;
+}
