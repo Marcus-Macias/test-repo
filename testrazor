@@ -1,0 +1,93 @@
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using TestSCVR.Models;
+
+namespace TestSCVR.Components.Pages;
+
+public partial class GeneralInformation : ComponentBase
+{
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private MudForm _form = default!;
+    private bool _submitting;
+
+    /// <summary>The data captured by this page.</summary>
+    protected GeneralInformationModel Model { get; set; } = new();
+
+    /// <summary>Add/remove a race option from the multi-select set.</summary>
+    private void ToggleRace(string race, bool selected)
+    {
+        if (selected)
+        {
+            Model.Races.Add(race);
+        }
+        else
+        {
+            Model.Races.Remove(race);
+        }
+    }
+
+    /// <summary>Copy the street address fields into the mailing address fields.</summary>
+    private void CopyStreetToMailing()
+    {
+        Model.MailingAddress = Model.StreetAddress;
+        Model.MailingState = Model.StreetState;
+        Model.MailingCity = Model.StreetCity;
+        Model.MailingZip = Model.StreetZip;
+    }
+
+    /// <summary>Clear all mailing address fields.</summary>
+    private void ClearMailingAddress()
+    {
+        Model.MailingAddress = null;
+        Model.MailingState = null;
+        Model.MailingCity = null;
+        Model.MailingZip = null;
+    }
+
+    /// <summary>Validate the form and advance to the next survey section.</summary>
+    private async Task ContinueAsync()
+    {
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Snackbar.Add("Please correct the highlighted fields before continuing.", Severity.Warning);
+            return;
+        }
+
+        _submitting = true;
+        try
+        {
+            await SaveAsync(Model);
+            Snackbar.Add("General information saved.", Severity.Success);
+
+            // Next section in the survey flow. Route is a placeholder until the
+            // remaining pages are built.
+            // Navigation.NavigateTo("/referral-source");
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    /// <summary>
+    /// Persists the model to the survey API.
+    /// NOTE: The survey API endpoints are not publicly available yet, so this
+    /// is a stub. Replace the body with an injected typed HttpClient / service
+    /// call (e.g. <c>await _surveyApi.SaveGeneralInformationAsync(model)</c>)
+    /// once the endpoints are exposed.
+    /// </summary>
+    private static Task SaveAsync(GeneralInformationModel model)
+    {
+        // TODO: POST `model` to the survey service.
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Exit the survey.</summary>
+    private void Exit()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
