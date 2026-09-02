@@ -1,0 +1,51 @@
+namespace TestSCVR.Models;
+
+/// <summary>
+/// Data captured on the "General Information" step of the survey application
+/// (mirrors the WinForms "General Information" tab being ported to Blazor/MudBlazor).
+/// </summary>
+public class GeneralInformationModel
+{
+    // ---------- Attestation ----------
+    public bool NoClosuresWithin36Months { get; set; }
+
+    // ---------- Identity ----------
+    public string? SocialSecurityNumber { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+
+    // ---------- Name ----------
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
+    public string? MiddleInitial { get; set; }
+    public string? Suffix { get; set; }
+    public string? PreferredName { get; set; }
+    public string? MaidenName { get; set; }
+
+    // ---------- Contact Information ----------
+    public string? HomePhone { get; set; }
+    public string? MobilePhone { get; set; }
+    public string? WorkPhone { get; set; }
+    public string? Email { get; set; }
+
+    // ---------- Demographics ----------
+    public string? Gender { get; set; }
+    public string? Hispanic { get; set; }
+    public bool? IsVeteran { get; set; }
+
+    /// <summary>Race is multi-select in the source WinForms form (checkboxes), so it's a set of strings here.</summary>
+    public HashSet<string> Races { get; set; } = new();
+
+    // ---------- Street Address ----------
+    public string? StreetAddress { get; set; }
+    public string? StreetSuite { get; set; }
+    public string? StreetState { get; set; }
+    public string? StreetCity { get; set; }
+    public string? StreetZip { get; set; }
+    public string? StreetCounty { get; set; }
+
+    // ---------- Mailing Address ----------
+    public string? MailingAddress { get; set; }
+    public string? MailingState { get; set; }
+    public string? MailingCity { get; set; }
+    public string? MailingZip { get; set; }
+}
