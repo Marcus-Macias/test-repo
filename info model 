@@ -1,0 +1,56 @@
+namespace TestSCVR.Models;
+
+/// <summary>
+/// Static lookup lists backing the dropdowns/checkboxes on the General Information page.
+/// Sourced from the fields visible on the legacy WinForms "General Information" tab.
+/// </summary>
+public static class GeneralInformationOptions
+{
+    public static readonly string[] Suffixes =
+    {
+        "Jr.",
+        "Sr.",
+        "II",
+        "III",
+        "IV",
+    };
+
+    public static readonly string[] Genders =
+    {
+        "Male",
+        "Female",
+        "Non-binary",
+        "Prefer not to answer",
+    };
+
+    public static readonly string[] HispanicOptions =
+    {
+        "Yes",
+        "No",
+        "Prefer not to answer",
+    };
+
+    /// <summary>
+    /// Matches the checkbox list on the WinForms form: American Indian or Alaska Native,
+    /// Asian, Black or African American, White, Native Hawaiian or Other Pacific Islander,
+    /// Does Not Self-Identify.
+    /// </summary>
+    public static readonly string[] Races =
+    {
+        "American Indian or Alaska Native",
+        "Asian",
+        "Black or African American",
+        "White",
+        "Native Hawaiian or Other Pacific Islander",
+        "Does Not Self-Identify",
+    };
+
+    public static readonly string[] States =
+    {
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+    };
+}
