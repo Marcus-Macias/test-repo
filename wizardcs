@@ -1,0 +1,112 @@
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using TestSCVR.Models;
+
+namespace TestSCVR.Components.Pages;
+
+public partial class GeneralInformationWizard : ComponentBase
+{
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private MudForm _form = default!;
+    private MudStepper _stepper = default!;
+    private bool _submitting;
+
+    /// <summary>The data captured by this page.</summary>
+    protected GeneralInformationModel Model { get; set; } = new();
+
+    /// <summary>
+    /// Runs before the stepper advances to the next step. Only the fields on the
+    /// currently-active step are mounted in the DOM, so validating the shared
+    /// MudForm here effectively validates just that step.
+    /// NOTE: verify the "PreventStepChangeAsync" signature against your installed
+    /// MudBlazor version — it's been stable in recent MudBlazor releases, but if
+    /// your NuGet version differs slightly, adjust the delegate shape to match.
+    /// </summary>
+    private async Task<bool> ValidateStepChangeAsync(StepChangeDirection direction)
+    {
+        if (direction != StepChangeDirection.Forward)
+        {
+            return false; // allow moving backward (or no-op) without validating
+        }
+
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Snackbar.Add("Please correct the highlighted fields before continuing.", Severity.Warning);
+            return true; // true = prevent the step change
+        }
+
+        return false;
+    }
+
+    /// <summary>Add/remove a race option from the multi-select set.</summary>
+    private void ToggleRace(string race, bool selected)
+    {
+        if (selected)
+        {
+            Model.Races.Add(race);
+        }
+        else
+        {
+            Model.Races.Remove(race);
+        }
+    }
+
+    /// <summary>Copy the street address fields into the mailing address fields.</summary>
+    private void CopyStreetToMailing()
+    {
+        Model.MailingAddress = Model.StreetAddress;
+        Model.MailingState = Model.StreetState;
+        Model.MailingCity = Model.StreetCity;
+        Model.MailingZip = Model.StreetZip;
+    }
+
+    /// <summary>Clear all mailing address fields.</summary>
+    private void ClearMailingAddress()
+    {
+        Model.MailingAddress = null;
+        Model.MailingState = null;
+        Model.MailingCity = null;
+        Model.MailingZip = null;
+    }
+
+    /// <summary>Save the model once the wizard reaches its completed state, then advance the survey.</summary>
+    private async Task ContinueAsync()
+    {
+        _submitting = true;
+        try
+        {
+            await SaveAsync(Model);
+            Snackbar.Add("General information saved.", Severity.Success);
+
+            // Next section in the survey flow. Route is a placeholder until the
+            // remaining pages are built.
+            // Navigation.NavigateTo("/referral-source");
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    /// <summary>
+    /// Persists the model to the survey API.
+    /// NOTE: The survey API endpoints are not publicly available yet, so this
+    /// is a stub. Replace the body with an injected typed HttpClient / service
+    /// call (e.g. <c>await _surveyApi.SaveGeneralInformationAsync(model)</c>)
+    /// once the endpoints are exposed.
+    /// </summary>
+    private static Task SaveAsync(GeneralInformationModel model)
+    {
+        // TODO: POST `model` to the survey service.
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Exit the survey.</summary>
+    private void Exit()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
