@@ -1,0 +1,99 @@
+@page "/personal-contacts"
+@using TestSCVR.Models
+
+<PageTitle>Personal Contacts</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+
+    <div class="mb-6">
+        <MudText Typo="Typo.overline" Color="Color.Primary">Survey Application</MudText>
+        <MudText Typo="Typo.h4" Class="fw-600">Personal Contacts</MudText>
+    </div>
+
+    @* ---------- Entry form: add a new contact, or edit the one selected below ---------- *@
+    <MudPaper Elevation="0" Class="pa-6 rounded-xl mud-border-lines mb-6">
+        <MudForm @ref="_form" Model="Entry">
+            <MudGrid Spacing="4">
+                <MudItem xs="12" md="9">
+                    <MudGrid Spacing="4">
+                        <MudItem xs="12" sm="8">
+                            <MudTextField @bind-Value="Entry.Name" Label="Name"
+                                          Required="true" RequiredError="Name is required"
+                                          Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudSelect @bind-Value="Entry.Relationship" Label="Relationship"
+                                       Required="true" RequiredError="Relationship is required"
+                                       Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                                @foreach (var relationship in PersonalContactsOptions.Relationships)
+                                {
+                                    <MudSelectItem Value="@relationship">@relationship</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="Entry.Phone" Label="Phone"
+                                          Mask="@(new PatternMask("(000) 000-0000"))"
+                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone"
+                                          Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="Entry.Address" Label="Address"
+                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Home"
+                                          Variant="Variant.Outlined" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+
+                @* ---------- Add / Update / Delete, stacked on the right like the WinForms tab ---------- *@
+                <MudItem xs="12" md="3">
+                    <MudStack Spacing="2" Justify="Justify.FlexStart" Class="h-100">
+                        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Add"
+                                   OnClick="AddAsync">Add</MudButton>
+                        <MudButton FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Edit"
+                                   Disabled="@(_selected is null)"
+                                   OnClick="UpdateAsync">Update</MudButton>
+                        <MudButton FullWidth="true" Variant="Variant.Outlined" Color="Color.Error"
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   Disabled="@(_selected is null)"
+                                   OnClick="Delete">Delete</MudButton>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </MudPaper>
+
+    @* ---------- List of contacts added so far ---------- *@
+    <MudTable Items="Contacts" T="PersonalContactModel" Hover="true" Dense="false"
+              Class="rounded-xl mud-border-lines"
+              RowStyleFunc="RowStyle"
+              OnRowClick="@((TableRowClickEventArgs<PersonalContactModel> e) => SelectContact(e.Item))">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Relationship</MudTh>
+            <MudTh>Phone</MudTh>
+            <MudTh>Address</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Relationship">@context.Relationship</MudTd>
+            <MudTd DataLabel="Phone">@context.Phone</MudTd>
+            <MudTd DataLabel="Address">@context.Address</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Color="Color.Secondary">No contacts added yet.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+
+    @* ---------- Footer navigation ---------- *@
+    <div class="d-flex justify-space-between mt-6">
+        <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                   StartIcon="@Icons.Material.Filled.Logout"
+                   OnClick="Exit">Exit</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   EndIcon="@Icons.Material.Filled.ArrowForward"
+                   OnClick="Next">Next</MudButton>
+    </div>
+</MudContainer>
