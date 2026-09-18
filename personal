@@ -22,9 +22,7 @@ public partial class PersonalContacts : ComponentBase
     private PersonalContactModel? _selected;
 
     /// <summary>Adds the top form's values as a new contact, then clears the form.</summary>
-    private async Task AddAsync()
-    {
-        await _form.Validate();
+    private async Task AddAsync()await _form.Validate();
         if (!_form.IsValid)
         {
             return;
@@ -35,3 +33,83 @@ public partial class PersonalContacts : ComponentBase
             Name = Entry.Name,
             Relationship = Entry.Relationship,
             Phone = Entry.Phone,
+            Address = Entry.Address,
+        });
+
+        ClearEntry();
+    }
+
+    /// <summary>Applies the top form's values to the currently-selected contact.</summary>
+    private async Task UpdateAsync()
+    {
+        if (_selected is null)
+        {
+            return;
+        }
+
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        _selected.Name = Entry.Name;
+        _selected.Relationship = Entry.Relationship;
+        _selected.Phone = Entry.Phone;
+        _selected.Address = Entry.Address;
+
+        ClearEntry();
+    }
+
+    /// <summary>Removes the currently-selected contact from the list.</summary>
+    private void Delete()
+    {
+        if (_selected is null)
+        {
+            return;
+        }
+
+        Contacts.Remove(_selected);
+        ClearEntry();
+    }
+
+    /// <summary>Selecting a row copies its values into the top form for editing.</summary>
+    private void SelectContact(PersonalContactModel contact)
+    {
+        _selected = contact;
+        Entry = new PersonalContactModel
+        {
+            Id = contact.Id,
+            Name = contact.Name,
+            Relationship = contact.Relationship,
+            Phone = contact.Phone,
+            Address = contact.Address,
+        };
+    }
+
+    /// <summary>Highlights the selected row, matching the blue highlight in the WinForms grid.</summary>
+    private string RowStyle(PersonalContactModel contact, int index) =>
+        _selected is not null && contact.Id == _selected.Id
+            ? "background-color:var(--mud-palette-primary);color:var(--mud-palette-primary-text);"
+            : string.Empty;
+
+    /// <summary>Resets the top form back to a blank, unselected entry.</summary>
+    private void ClearEntry()
+    {
+        _selected = null;
+        Entry = new PersonalContactModel();
+    }
+
+    /// <summary>Move on to the next section of the survey.</summary>
+    private void Next()
+    {
+        // Route is a placeholder until the next section is built.
+        // Navigation.NavigateTo("/education-background");
+    }
+
+    /// <summary>Exit the survey.</summary>
+    private void Exit()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
