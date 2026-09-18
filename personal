@@ -1,0 +1,37 @@
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using TestSCVR.Models;
+
+namespace TestSCVR.Components.Pages;
+
+public partial class PersonalContacts : ComponentBase
+{
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private MudForm _form = default!;
+
+    /// <summary>The contact currently shown in the top form — either a new, blank
+    /// entry or a copy of whichever row in the list is selected.</summary>
+    protected PersonalContactModel Entry { get; set; } = new();
+
+    /// <summary>All contacts added so far, shown in the table below.</summary>
+    protected List<PersonalContactModel> Contacts { get; set; } = new();
+
+    /// <summary>The contact selected from the table, if any. Update/Delete act on this.</summary>
+    private PersonalContactModel? _selected;
+
+    /// <summary>Adds the top form's values as a new contact, then clears the form.</summary>
+    private async Task AddAsync()
+    {
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        Contacts.Add(new PersonalContactModel
+        {
+            Name = Entry.Name,
+            Relationship = Entry.Relationship,
+            Phone = Entry.Phone,
