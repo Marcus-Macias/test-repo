@@ -22,7 +22,9 @@ public partial class PersonalContacts : ComponentBase
     private PersonalContactModel? _selected;
 
     /// <summary>Adds the top form's values as a new contact, then clears the form.</summary>
-    private async Task AddAsync()await _form.Validate();
+    private async Task AddAsync()
+    {
+        await _form.Validate();
         if (!_form.IsValid)
         {
             return;
