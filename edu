@@ -1,208 +1,33 @@
-@page "/education-background"
-@using TestSCVR.Models
+namespace TestSCVR.Models;
 
-<PageTitle>Education &amp; Background</PageTitle>
+/// <summary>
+/// Data captured on the "Education &amp; Background" step of the survey application.
+/// </summary>
+public class EducationBackgroundModel
+{
+    // ---------- Student status ----------
+    /// <summary>Whether the applicant is currently a student. Gates <see cref="CurrentTrack"/>
+    /// and <see cref="ProjectedGraduation"/> — both are only selectable when this is true.</summary>
+    public bool? IsStudent { get; set; }
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+    /// <summary>One of "Certificate or Occupational degree", "High school diploma", "GED".
+    /// Only meaningful/selectable when <see cref="IsStudent"/> is true.</summary>
+    public string? CurrentTrack { get; set; }
 
-    <div class="mb-6">
-        <MudText Typo="Typo.overline" Color="Color.Primary">Survey Application</MudText>
-        <MudText Typo="Typo.h4" Class="fw-600">Education &amp; Background</MudText>
-    </div>
+    /// <summary>Only meaningful/selectable when <see cref="IsStudent"/> is true.</summary>
+    public DateTime? ProjectedGraduation { get; set; }
 
-    <MudForm @ref="_form" Model="Model">
+    // ---------- Disability ----------
+    /// <summary>One of the "Student with a Disability" options (0-3), matching the WinForms dropdown.</summary>
+    public string? StudentWithDisability { get; set; }
 
-        @* ---------- Student status ---------- *@
-        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
-            <MudText Typo="Typo.h6" Class="fw-600 mb-5">Student Status</MudText>
-            <MudGrid Spacing="4">
-                <MudItem xs="12" sm="4" md="3">
-                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">Is the applicant a student?</MudText>
-                    <MudToggleGroup T="bool?" Value="Model.IsStudent" ValueChanged="OnIsStudentChanged"
-                                    Color="Color.Primary" CheckMark="true" FixedContent="true"
-                                    SelectionMode="SelectionMode.SingleSelection">
-                        <MudToggleItem Value="@((bool?)true)" Text="Yes" />
-                        <MudToggleItem Value="@((bool?)false)" Text="No" />
-                    </MudToggleGroup>
-                </MudItem>
+    // ---------- Barriers to employment ----------
+    /// <summary>"Yes", "No", or "Barrier to Employment Information Unknown".</summary>
+    public string? ExOffenderStatus { get; set; }
 
-                <MudItem xs="12" sm="8" md="5">
-                    <MudSelect T="string" Value="Model.CurrentTrack" ValueChanged="@((string v) => Model.CurrentTrack = v)"
-                               Label="Applicant's Current Track" Clearable="true"
-                               Disabled="@(Model.IsStudent != true)"
-                               Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var track in EducationBackgroundOptions.CurrentTracks)
-                        {
-                            <MudSelectItem Value="@track">@track</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
+    /// <summary>Only fillable when <see cref="ExOffenderStatus"/> is "Yes".</summary>
+    public string? OffenderCharges { get; set; }
 
-                <MudItem xs="12" sm="6" md="4">
-                    <MudDatePicker Date="Model.ProjectedGraduation" DateChanged="@((DateTime? d) => Model.ProjectedGraduation = d)"
-                                   Label="Projected Graduation"
-                                   Disabled="@(Model.IsStudent != true)"
-                                   Placeholder="MM/DD/YYYY"
-                                   Editable="true"
-                                   Variant="Variant.Outlined" />
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-
-        @* ---------- Disability ---------- *@
-        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
-            <MudText Typo="Typo.h6" Class="fw-600 mb-5">Disability</MudText>
-            <MudGrid Spacing="4">
-                <MudItem xs="12" md="8">
-                    <MudSelect @bind-Value="Model.StudentWithDisability" Label="Student with a Disability"
-                               Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                        @foreach (var option in EducationBackgroundOptions.StudentDisabilityOptions)
-                        {
-                            <MudSelectItem Value="@option">@option</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-
-        @* ---------- Barriers to employment ---------- *@
-        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
-            <MudText Typo="Typo.h6" Class="fw-600 mb-5">Barriers to Employment</MudText>
-            <MudGrid Spacing="4">
-                <MudItem xs="12">
-                    <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-2">Is the applicant an ex-offender?</MudText>
-                    <MudToggleGroup T="string" Value="Model.ExOffenderStatus" ValueChanged="OnExOffenderStatusChanged"
-                                    Color="Color.Primary" CheckMark="true" FixedContent="true"
-                                    SelectionMode="SelectionMode.SingleSelection">
-                        <MudToggleItem Value="@("No")" Text="No" />
-                        <MudToggleItem Value="@("Yes")" Text="Yes" />
-                        <MudToggleItem Value="@("Unknown")" Text="Barrier to Employment Information Unknown" />
-                    </MudToggleGroup>
-                </MudItem>
-
-                <MudItem xs="12">
-                    <MudTextField @bind-Value="Model.OffenderCharges" Label="If yes, list charges"
-                                  Disabled="@(Model.ExOffenderStatus != "Yes")"
-                                  Lines="2"
-                                  Variant="Variant.Outlined" />
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-
-        @* ---------- Impairment ---------- *@
-        <MudPaper Elevation="0" Class="pa-6 mb-6 rounded-xl mud-border-lines">
-            <MudText Typo="Typo.h6" Class="fw-600 mb-5">Impairment</MudText>
-            <MudTextField @bind-Value="Model.ImpairmentDescription"
-                          Label="Applicant's description of impairment, how it affects ability to work, and reason for referral"
-                          Lines="4"
-                          Variant="Variant.Outlined" />
-        </MudPaper>
-
-        @* ---------- Actions ---------- *@
-        <div class="d-flex justify-space-between align-center mt-8">
-            <MudButton Variant="Variant.Outlined" Color="Color.Error"
-                       StartIcon="@Icons.Material.Filled.Logout"
-                       OnClick="Exit">Exit</MudButton>
-
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                       EndIcon="@Icons.Material.Filled.ArrowForward"
-                       Disabled="_submitting"
-                       OnClick="ContinueAsync">
-                @if (_submitting)
-                {
-                    <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
-                    <span>Savingâ€¦</span>
-                }
-                else
-                {
-                    <span>Continue</span>
-                }
-            </MudButton>
-        </div>
-    </MudForm>
-</MudContainer>
-
-@code {
-    [Inject] private ISnackbar Snackbar { get; set; } = default!;
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
-
-    private MudForm _form = default!;
-    private bool _submitting;
-
-    /// <summary>The data captured by this page.</summary>
-    protected EducationBackgroundModel Model { get; set; } = new();
-
-    /// <summary>
-    /// When the applicant is marked as not a student, the track/graduation fields are
-    /// no longer selectable, so clear whatever was in them (matches the WinForms
-    /// behavior of greying out and blanking dependent fields).
-    /// </summary>
-    private void OnIsStudentChanged(bool? isStudent)
-    {
-        Model.IsStudent = isStudent;
-
-        if (isStudent != true)
-        {
-            Model.CurrentTrack = null;
-            Model.ProjectedGraduation = null;
-        }
-    }
-
-    /// <summary>
-    /// When the ex-offender answer changes away from "Yes", the charges field is no
-    /// longer fillable, so clear whatever was typed there.
-    /// </summary>
-    private void OnExOffenderStatusChanged(string? status)
-    {
-        Model.ExOffenderStatus = status;
-
-        if (status != "Yes")
-        {
-            Model.OffenderCharges = null;
-        }
-    }
-
-    /// <summary>Validate the form and advance to the next survey section.</summary>
-    private async Task ContinueAsync()
-    {
-        await _form.Validate();
-        if (!_form.IsValid)
-        {
-            Snackbar.Add("Please correct the highlighted fields before continuing.", Severity.Warning);
-            return;
-        }
-
-        _submitting = true;
-        try
-        {
-            await SaveAsync(Model);
-            Snackbar.Add("Education & background saved.", Severity.Success);
-
-            // Next section in the survey flow. Route is a placeholder until the
-            // remaining pages are built.
-            // Navigation.NavigateTo("/employment-history");
-        }
-        finally
-        {
-            _submitting = false;
-        }
-    }
-
-    /// <summary>
-    /// Persists the model to the survey API.
-    /// NOTE: The survey API endpoints are not publicly available yet, so this
-    /// is a stub. Replace the body with an injected typed HttpClient / service
-    /// call once the endpoints are exposed.
-    /// </summary>
-    private static Task SaveAsync(EducationBackgroundModel model)
-    {
-        // TODO: POST `model` to the survey service.
-        return Task.CompletedTask;
-    }
-
-    /// <summary>Exit the survey.</summary>
-    private void Exit()
-    {
-        Navigation.NavigateTo("/");
-    }
+    // ---------- Impairment ----------
+    public string? ImpairmentDescription { get; set; }
 }
